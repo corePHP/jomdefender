@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.6" type="plugin" group="system" method="upgrade">
+	<name>System - jomDefender</name>
+	<author>'corePHP'</author>
+	<creationDate>2010-06-15</creationDate>
+	<copyright>Copyright 2010 by 'corePHP'. All rights reserved</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL see LICENSE.txt</license>
+	<authorEmail>support@corephp.com</authorEmail>
+	<authorUrl>http://www.corephp.com</authorUrl>
+	<version>1.2</version>
+	<description>JD_PLUGIN_DESC</description>
+
+	<files>
+		<filename plugin="jomdefender">jomdefender.php</filename>
+		<filename>LICENSE.txt</filename>
+		<folder>language</folder>
+		<folder>qp</folder>
+	</files>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_system_jomdefender.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_system_jomdefender.sys.ini</language>
+	</languages>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="template_generator_php" type="list" default="0" label="JD_TEMPLATE_GEN_PHP_NAME" description="JD_TEMPLATE_GEN_PHP_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="remove_joomla" type="list" default="0" label="JD_REMOVE_JOOMLA_NAME" description="JD_REMOVE_JOOMLS_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="remove_space" type="list" default="0" label="JD_REMOVE_SPACE_NAME" description="JD_REMOVE_SPACE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="logout_referrer" type="list" default="0" label="JD_LOGOUT_REFERRER" description="JD_LOGOUT_REFERRER_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Joomla PHP header //-->
+				<field name="remove_joomla_header" type="list" default="0" label="JD_REMOVE_JOOMLA_HEADER_NAME" description="JD_REMOVE_JOOMLA_HEADER_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="remove_joomla_header_txt" type="text" default="Company" label="JD_REMOVE_JOOMLA_HEADER_TXT_NAME" description="JD_REMOVE_JOOMLA_HEADER_TXT_DESC" />
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Admin must have password //-->
+				<field name="psw_prompt" type="list" default="0" label="JD_PSW_PROMPT_NAME" description="JD_PSW_PROMPT_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="psw" type="password" default="" label="JD_PSW_NAME" description="JD_PSW_DESC" />
+				<field name="psw_time" type="text" default="0" label="JD_PSW_EXPIRE_NAME" description="JD_PSW_EXPIRE_DESC" />
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Check files //-->
+				<field name="file_integrity" type="list" default="0" label="JD_FILE_INTEGRITY" description="JD_FILE_INTEGRITY_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="exclude_directories" type="textarea" rows="6" cols="30" default="" label="JD_EXCLUDE_DIRECTORIES" description="JD_EXCLUDE_DIRECTORIES_DESC" />
+				<field name="admin_emails" type="textarea" rows="6" cols="30" default="" label="JD_ADMIN_EMAILS" description="JD_ADMIN_EMAILS_DESC" />
+				<field name="cron_url" type="text" default="jd_run_cron" label="JD_CRON_URL" description="JD_CRON_URL_DESC" />
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Restrict by IP //-->
+				<field name="allow_deny" type="list" default="0" label="JD_IP_ALLOW_DENY_NAME" description="JD_IP_ALLOW_DENY_DESC">
+					<option value="0">JNONE</option>
+					<option value="allow">JD_ALLOW</option>
+					<option value="deny">JD_DENY</option>
+				</field>
+				<field name="ip_list" type="text" default="0" label="JD_IP_LIST_NAME" description="JD_IP_LIST_DESC" />
+				<field name="restrict_for" type="list" default="0" label="JD_IP_RESTRICT_FOR_NAME" description="JD_IP_RESTRICT_FOR_DESC">
+					<option value="both">JD_BOTH</option>
+					<option value="site">JD_SITE</option>
+					<option value="admin">JD_ADMIN</option>
+				</field>
+				<field name="ip_error_num" type="text" default="500" label="JD_IP_ERROR_NUM_NAME" description="JD_IP_ERROR_NUM_DESC" />
+				<field name="ip_error_msg" type="text" default="Unable to load the page you requested" label="JD_IP_ERROR_MSG_NAME" description="" />
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Dissable plugin //-->
+				<field name="enable_disable" type="list" default="0" label="JD_ENABLE_DISABLE_NAME" description="JD_ENABLE_DISABLE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="enable_disable_string" type="text" default="" label="JD_ENABLE_DISABLE_STRING_NAME" description="JD_ENABLE_DISABLE_STRING_DESC" />
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Use Cache //-->
+				<field name="use_cache" type="list" default="0" label="JD_USE_CACHE_NAME" description="JD_USE_CACHE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="cache_time" type="text" default="60" label="JD_CACHE_TIME_NAME" description="JD_CACHE_TIME_DESC" />
+				<field name="smart_cache" type="list" default="0" label="JD_SMART_CACHE_NAME" description="JD_SMART_CACHE_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field type="spacer" label="__________________________________________________" />
+				<!-- Display execution time //-->
+				<field name="display_timer" type="list" default="0" label="JD_DISPLAY_TIMER_NAME" description="JD_DISPLAY_TIMER_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<!-- This is here to allow disabling of the plugin when 'disable string' is used -->
+				<field name="ninja_parameter" type="hidden" default="" label="" description="" />
+			</fieldset>
+		</fields>
+	</config>
+</extension>
