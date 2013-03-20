@@ -182,7 +182,7 @@ class plgSystemJomDefender extends JPlugin
 			$encodedby = preg_replace( '/[^a-zA-Z0-9.-\s]/', '', $encodedby );
 
 			// Retrieve the JResponse class script
-			$filename = JPATH_ROOT.DS.'libraries'.DS.'joomla'.DS.'environment'.DS.'response.php';
+			$filename = JPATH_ROOT.'/libraries/joomla/environment/response.php';
 			$handle   = fopen( $filename, 'r' );
 			$response = fread( $handle, filesize( $filename ) );
 
@@ -620,7 +620,7 @@ die();
 
 		// Clean up
 		foreach ( $this->excluded_dirs as &$value ) {
-			$value = str_replace( array( '/', '\\' ), DS, rtrim( $value, '/\\' ) );
+			$value = str_replace( array( '/', '\\' ), '/', rtrim( $value, '/\\' ) );
 		}
 
 		// Set env vars
@@ -658,16 +658,16 @@ die();
 		if ( $handle = @opendir( $dir ) ) {
 			while ( false !== ( $file = readdir( $handle ) ) ) {
 				if ( '.htaccess' == $file || '.' != substr( $file, 0, 1 ) ) {
-					if ( is_dir( $dir .DS. $file ) ) {
-						if ( in_array( str_replace( JPATH_ROOT, '', $dir .DS. $file ),
+					if ( is_dir( $dir . '/' . $file ) ) {
+						if ( in_array( str_replace( JPATH_ROOT, '', $dir . '/' . $file ),
 						 	$this->excluded_dirs )
 						) {
 							continue;
 						}
 
-						$files[] = $this->check_all_files( $dir .DS. $file );
+						$files[] = $this->check_all_files( $dir . '/' . $file );
 					} else {
-						$this->check_file( $dir .DS. $file );
+						$this->check_file( $dir . '/' . $file );
 					}
 				}
 			}
