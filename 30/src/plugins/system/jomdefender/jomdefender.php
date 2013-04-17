@@ -13,7 +13,7 @@ global $JomDefender_plugin, $JomDefender_params;
 jimport( 'joomla.plugin.plugin' );
 jimport( 'joomla.registry.registry' );
 
-$JomDefender_application = & JFactory::getApplication();
+$JomDefender_application = JFactory::getApplication();
 $JomDefender_plugin      = JPluginHelper::getPlugin( 'system', 'jomdefender' );
 
 //echo'<pre>';print_r($JomDefender_plugin);echo'</pre>';die();
@@ -69,7 +69,7 @@ class plgSystemJomDefender extends JPlugin
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param subject {{@internal Missing Description}}}
 	 */
 	function plgSystemJomDefender( &$subject )
@@ -78,7 +78,7 @@ class plgSystemJomDefender extends JPlugin
 
 		parent::__construct( $subject );
 
-		
+
 		// Check to see if plugin should be disabled
 		$this->_params = $JomDefender_params;
 		if ( $this->_params->get( 'enable_disable', 0 )
@@ -94,10 +94,10 @@ class plgSystemJomDefender extends JPlugin
 
 		// Initialize Variables
 		$this->_plugin      = $JomDefender_plugin;
-		$this->_application = &JFactory::getApplication();
-		$this->_session     = &JFactory::getSession();
-		$this->_user        = &JFactory::getUser();
-		$this->_config      = &JFactory::getConfig();
+		$this->_application = JFactory::getApplication();
+		$this->_session     = JFactory::getSession();
+		$this->_user        = JFactory::getUser();
+		$this->_config      = JFactory::getConfig();
 
 		$this->_is_site     = $this->_application->isSite();
 		$this->_is_admin    = $this->_application->isAdmin();
@@ -150,18 +150,18 @@ class plgSystemJomDefender extends JPlugin
 				}
 
 				if ( true == $error ) {
-					throw new Exception( $this->_params->get( 'ip_error_msg', 'Error' ), 
+					throw new Exception( $this->_params->get( 'ip_error_msg', 'Error' ),
 						$this->_params->get( 'ip_error_num', 122112 )
 					);
 				}
 			}
-			
+
 			unset( $where, $ips, $_client, $_clientl, $exists );
 		}
 
 		if( $this->_params->get( 'use_cache' ) && $this->_is_site && $this->_user->guest ){
 			jimport( 'joomla.cache.cache' );
-			$this->_cache =& JCache::getInstance();
+			$this->_cache = JCache::getInstance();
 			$this->_cache->setLifeTime(
 				( $this->_params->get( 'cache_time' ) )
 					? ( $this->_params->get( 'cache_time' ) * 60 )
@@ -173,7 +173,7 @@ class plgSystemJomDefender extends JPlugin
 		}
 
 		if ( $this->_params->get( 'remove_joomla_header' )
-			&& 1 == (int) $this->_config->getValue('gzip')
+			&& 1 == (int) $this->_config->get('gzip')
 		) {
 			// New value for X-Content-Encoded-By header
 			$encodedby = $this->_params->get( 'remove_joomla_header_txt', 'Company' );
@@ -383,7 +383,7 @@ class plgSystemJomDefender extends JPlugin
 	/**
 	 * Check provided password against the password that is saved
 	 * if passwords match let user go by and store necessary information to ask again.
-	 * 
+	 *
 	 * @return true/false if authentication success/failure
 	 */
 	function check_authentication()
@@ -410,7 +410,7 @@ class plgSystemJomDefender extends JPlugin
 	 */
 	function show_login_prompt()
 	{
-		$config =& JFactory::getConfig();
+		$config = JFactory::getConfig();
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -487,7 +487,7 @@ die();
 	 * @global int $timestart Seconds and Microseconds added together from when function is called.
 	 * @return bool Always returns true.
 	 */
-	function timer_start() {
+	public static function timer_start() {
 		global $jd_timestart;
 
 		$mtime = explode( ' ', microtime() );
@@ -555,7 +555,7 @@ die();
 			// 	array( '192.168.0.0', '192.168.255.255' ),
 			// 	array( '255.255.255.0', '255.255.255.255' )
 			// );
-			// 
+			//
 			// foreach ( $reserved_ips as $r ) {
 			// 	$min = ip2long( $r[0] );
 			// 	$max = ip2long( $r[1] );
@@ -846,7 +846,7 @@ if( $JomDefender_params->get( 'display_timer' ) && $JomDefender_application->isS
 if ( !function_exists( 'myPrint' ) ) {
 /**
  * Function for printing data
- * @return 
+ * @return
  */
 function myPrint( $var, $pre = true )
 {
