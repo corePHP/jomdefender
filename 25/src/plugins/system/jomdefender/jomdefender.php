@@ -17,7 +17,7 @@ jimport('joomla.html.parameter');
 
 $JomDefender_application = JFactory::getApplication();
 $JomDefender_plugin = JPluginHelper::getPlugin('system', 'jomdefender');
-$JomDefender_params = new JParameter($JomDefender_plugin->params);
+$JomDefender_params = new JRegistry($JomDefender_plugin->params);
 
 class plgSystemJomDefender extends JPlugin {
 	/**
@@ -78,8 +78,7 @@ class plgSystemJomDefender extends JPlugin {
 		// Check to see if plugin should be disabled
 		$this->_params = $JomDefender_params;
 		if ($this->_params->get('enable_disable', 0)
-				&& $_string = $this->_params
-						->get('enable_disable_string', '')) {
+				&& $_string = $this->_params->get('enable_disable_string', '')) {
 			foreach ($_REQUEST as $key => $val) {
 				if ($key == $_string) {
 					$this->_disabled = true;
@@ -213,8 +212,7 @@ class plgSystemJomDefender extends JPlugin {
 			global $JomDefender_params;
 
 			$doc = JFactory::getDocument();
-			$disable_string = $JomDefender_params
-					->get('enable_disable_string');
+			$disable_string = $JomDefender_params->get('enable_disable_string');
 
 			$script = "window.addEvent('domready', function() { try {
 				el = document.getElementById( 'paramsninja_parameter' ).name= '{$disable_string}';
@@ -229,8 +227,7 @@ class plgSystemJomDefender extends JPlugin {
 			$this->check_authentication();
 
 			$expire_time = $this->_params->get('psw_time');
-			$expired_time = $this->_session
-					->get('psw_expired', 0, $this->name)
+			$expired_time = $this->_session->get('psw_expired', 0, $this->name)
 					+ ($expire_time * 60);
 			$authenticated = $this->_session
 					->get('psw_auth', null, $this->name);
@@ -301,7 +298,8 @@ class plgSystemJomDefender extends JPlugin {
 		// Remove all instances of the word Joomla! - This is just effed up man...
 		// If anyone things of a better way let me know.
 		// It is all about having the Joomla word repeat inside of the html tags
-		if ($this->_params->get('remove_joomla') && $this->_is_site && !$this->_user->authorise('can.edit', 'com_content')) {
+		if ($this->_params->get('remove_joomla') && $this->_is_site
+				&& !$this->_user->authorise('can.edit', 'com_content')) {
 			if (preg_match(
 					'/(?:(?<=\>)|(?<=\/\>))(\s*?.*?)(joomla(!)?)(\s*?.*?)(?=\<\/?)/i',
 					$data)) {

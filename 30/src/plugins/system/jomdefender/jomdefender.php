@@ -17,7 +17,7 @@ jimport('joomla.html.parameter');
 
 $JomDefender_application = JFactory::getApplication();
 $JomDefender_plugin = JPluginHelper::getPlugin('system', 'jomdefender');
-$JomDefender_params = new JParameter($JomDefender_plugin->params);
+$JomDefender_params      = new JRegistry( $JomDefender_plugin->params );
 
 class plgSystemJomDefender extends JPlugin {
 	/**
