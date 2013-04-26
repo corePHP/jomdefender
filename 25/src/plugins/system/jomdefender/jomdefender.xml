@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL see LICENSE.txt</license>
 	<authorEmail>support@corephp.com</authorEmail>
 	<authorUrl>http://www.corephp.com</authorUrl>
-	<version>1.3</version>
+	<version>1.3.2</version>
 	<description>JD_PLUGIN_DESC</description>
 
 	<files>
