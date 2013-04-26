@@ -301,7 +301,7 @@ class plgSystemJomDefender extends JPlugin {
 		// Remove all instances of the word Joomla! - This is just effed up man...
 		// If anyone things of a better way let me know.
 		// It is all about having the Joomla word repeat inside of the html tags
-		if ($this->_params->get('remove_joomla') && $this->_is_site) {
+		if ($this->_params->get('remove_joomla') && $this->_is_site && !$this->_user->authorise('can.edit', 'com_content')) {
 			if (preg_match(
 					'/(?:(?<=\>)|(?<=\/\>))(\s*?.*?)(joomla(!)?)(\s*?.*?)(?=\<\/?)/i',
 					$data)) {
