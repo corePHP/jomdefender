@@ -169,7 +169,7 @@ class plgSystemJomDefender extends JPlugin {
 		}
 
 		if ($this->_params->get('remove_joomla_header')
-				&& 1 == (int) $this->_config->getValue('gzip')) {
+				&& 1 == (int) $this->_config->get('gzip')) {
 			// New value for X-Content-Encoded-By header
 			$encodedby = $this->_params
 					->get('remove_joomla_header_txt', 'Company');
@@ -419,7 +419,7 @@ class plgSystemJomDefender extends JPlugin {
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="robots" content="nofollow" />
-  <title><?php echo $config->getValue('config.sitename'); ?></title>
+  <title><?php echo $config->get('config.sitename'); ?></title>
 <script language="javascript" type="text/javascript">
 	function setFocus() {
 		document.login.password.select();
