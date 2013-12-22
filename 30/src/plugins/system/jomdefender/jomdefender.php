@@ -67,7 +67,7 @@ class plgSystemJomDefender extends JPlugin {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param subject {{@internal Missing Description}}}
 	 */
 	function plgSystemJomDefender(&$subject) {
@@ -178,8 +178,7 @@ class plgSystemJomDefender extends JPlugin {
 			$encodedby = preg_replace('/[^a-zA-Z0-9.-\s]/', '', $encodedby);
 
 			// Retrieve the JResponse class script
-			$filename = JPATH_ROOT . DS . 'libraries' . DS . 'joomla' . DS
-					. 'environment' . DS . 'response.php';
+			$filename = JPATH_ROOT . '/libraries/joomla/environment/response.php';
 			$handle = fopen($filename, 'r');
 			$response = fread($handle, filesize($filename));
 
@@ -386,7 +385,7 @@ class plgSystemJomDefender extends JPlugin {
 	/**
 	 * Check provided password against the password that is saved
 	 * if passwords match let user go by and store necessary information to ask again.
-	 * 
+	 *
 	 * @return true/false if authentication success/failure
 	 */
 	function check_authentication() {
@@ -554,7 +553,7 @@ class plgSystemJomDefender extends JPlugin {
 			// 	array( '192.168.0.0', '192.168.255.255' ),
 			// 	array( '255.255.255.0', '255.255.255.255' )
 			// );
-			// 
+			//
 			// foreach ( $reserved_ips as $r ) {
 			// 	$min = ip2long( $r[0] );
 			// 	$max = ip2long( $r[1] );
@@ -835,7 +834,7 @@ if ($JomDefender_params->get('display_timer')
 if (!function_exists('myPrint')) {
 	/**
 	 * Function for printing data
-	 * @return 
+	 * @return
 	 */
 	function myPrint($var, $pre = true) {
 		if ($pre) {
