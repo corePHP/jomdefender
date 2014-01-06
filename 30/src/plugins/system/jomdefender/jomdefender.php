@@ -157,7 +157,7 @@ class plgSystemJomDefender extends JPlugin {
 		if ($this->_params->get('use_cache') && $this->_is_site
 				&& $this->_user->guest) {
 			jimport('joomla.cache.cache');
-			$this->_cache = &JCache::getInstance();
+			$this->_cache = JCache::getInstance();
 			$this->_cache
 					->setLifeTime(
 							($this->_params->get('cache_time')) ? ($this
@@ -389,7 +389,7 @@ class plgSystemJomDefender extends JPlugin {
 	 * @return true/false if authentication success/failure
 	 */
 	function check_authentication() {
-		$psw = JRequest::getString('psw', null);
+		$psw = JFactory::getApplication()->input->get( 'psw', null, 'STRING' );
 
 		if (!$psw) {
 			return false;
@@ -410,7 +410,7 @@ class plgSystemJomDefender extends JPlugin {
 	 * Show login prompt.
 	 */
 	function show_login_prompt() {
-		$config = &JFactory::getConfig();
+		$config = JFactory::getConfig();
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
