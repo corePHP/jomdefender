@@ -609,13 +609,15 @@ class plgSystemJomDefender extends JPlugin {
 		// Set vars
 		$this->_db = JFactory::getDBO();
 		$this->email_body = '';
-		$this->excluded_dirs = explode("\n",
+		$this->excluded_dirs = explode("\r\n",
 				$this->_params->get('exclude_directories'));
 
 		// Clean up
 		foreach ($this->excluded_dirs as &$value) {
-			$value = str_replace(array('/', '\\'), DS, rtrim($value, '/\\'));
+			$value = str_replace(array('/', '\\'), '/', rtrim($value, '/\\'));
 		}
+
+
 
 		// Set env vars
 		header('Cache-Control: no-cache, must-revalidate');
@@ -625,7 +627,6 @@ class plgSystemJomDefender extends JPlugin {
 		set_time_limit(900); // 15 minutes
 		// error_reporting( E_ALL );
 		// ini_set( 'display_errors', 1 );
-
 		$this->check_db();
 
 		$files = $this->check_all_files(JPATH_ROOT);
@@ -648,19 +649,22 @@ class plgSystemJomDefender extends JPlugin {
 	function check_all_files($dir) {
 		$files = array();
 
+		
 		if ($handle = @opendir($dir)) {
 			while (false !== ($file = readdir($handle))) {
 				if ('.htaccess' == $file || '.' != substr($file, 0, 1)) {
-					if (is_dir($dir . DS . $file)) {
+					if (is_dir($dir . '/' . $file)) {
+
 						if (in_array(
-								str_replace(JPATH_ROOT, '', $dir . DS . $file),
+								str_replace(JPATH_ROOT, '', $dir . '/' . $file),
 								$this->excluded_dirs)) {
+
 							continue;
 						}
 
-						$files[] = $this->check_all_files($dir . DS . $file);
+						$files[] = $this->check_all_files($dir . '/' . $file);
 					} else {
-						$this->check_file($dir . DS . $file);
+						$this->check_file($dir . '/' . $file);
 					}
 				}
 			}
@@ -684,12 +688,14 @@ class plgSystemJomDefender extends JPlugin {
 				'id' => md5(str_replace(JPATH_ROOT, '', $file)));
 
 		// Check to see if record exists
-		$query = "SELECT *
+	 	$query = "SELECT *
 			FROM `#__jd_file_integrity`
 				WHERE `id` = " . $this->_db->Quote($fdata['id']);
 		$this->_db->setQuery($query);
 		$row = $this->_db->loadObject();
-		if (!empty($row)) {
+
+		if ($row)
+		{
 			$query = "UPDATE `#__jd_file_integrity`
 				SET `size` = {$fdata['size']},
 				`mtime` = {$fdata['mtime']},
@@ -761,9 +767,9 @@ class plgSystemJomDefender extends JPlugin {
 					`group`, `mode`, `file_hash`,
 					`location`, `created_time`, `modified_time`)
 				VALUES
-				('{$fdata['id']}', {$fdata['size']}, {$fdata['mtime']}, {$fdata['owner']},
-					{$fdata['group']}, {$fdata['mode']}, '{$fdata['file_hash']}',
-					'{$fdata['location']}', {$now}, {$now})";
+				('{$fdata['id']}', '{$fdata['size']}', '{$fdata['mtime']}', '{$fdata['owner']}',
+					'{$fdata['group']}', '{$fdata['mode']}', '{$fdata['file_hash']}',
+					'{$fdata['location']}', '{$now}', '{$now}')";
 			$this->_db->setQuery($query);
 			$this->_db->query();
 
@@ -785,15 +791,27 @@ class plgSystemJomDefender extends JPlugin {
 	function send_email($body) {
 		$app = JFactory::getApplication();
 
-		jimport('joomla.utilities.utility');
+		//jimport('joomla.utilities.utility');
+		jimport('joomla.mail.mail');
+		$mailer = JFactory::getMailer();
+		
+		$recipients = explode("\r\n", $this->_params->get('admin_emails'));
+		
+		foreach($recipients as $recipient)
+		{
+			$mailfrom = $app->getCfg('mailfrom');
+			$fromname = $app->getCfg('fromname');
+			$subject = 'jomDefender Cron Job Results ' . date('Y-m-d');
 
-		$mailfrom = $app->getCfg('mailfrom');
-		$fromname = $app->getCfg('fromname');
-		$subject = 'jomDefender Cron Job Results ' . date('Y-m-d');
-
-		foreach (explode("\n", $this->_params->get('admin_emails')) as $email) {
-			JUtility::sendMail($mailfrom, $fromname, trim($email), $subject,
-					$body, false);
+			$sender = array( 
+			    $mailfrom,
+			    $fromname 
+			);
+			$mailer->setSubject($subject);
+			$mailer->setBody($body);
+			$mailer->setSender($sender);
+			$mailer->addRecipient($recipient);
+			$send = $mailer->Send();
 		}
 	}
 
@@ -803,24 +821,27 @@ class plgSystemJomDefender extends JPlugin {
 	function check_db() {
 		$query = "DESCRIBE #__jd_file_integrity";
 		$this->_db->setQuery($query);
-
-		// Create table
-		if (!$this->_db->loadResult()) {
-			$query = "CREATE TABLE IF NOT EXISTS `#__jd_file_integrity` (
-			  `id` varchar(32) NOT NULL COMMENT 'A hash of the path to the file',
-			  `size` int(11) unsigned NOT NULL COMMENT 'The size of the file',
-			  `mtime` int(11) unsigned NOT NULL COMMENT 'The file modification time',
-			  `owner` int(11) unsigned NOT NULL COMMENT 'The user id of the owner of the file',
-			  `group` int(11) unsigned NOT NULL COMMENT 'The group id of the owner of the file',
-			  `mode` int(4) NOT NULL COMMENT 'The current permissions of the file',
-			  `file_hash` varchar(32) NOT NULL COMMENT 'A hash of the contents of the file',
-			  `location` text NOT NULL COMMENT 'The location of the file going from the Joomla root, not the complete absolute path',
-			  `created_time` int(11) NOT NULL COMMENT 'The created time of the row',
-			  `modified_time` int(11) NOT NULL COMMENT 'The modified time of the row',
-			  PRIMARY KEY (`id`)
-			) CHARSET=utf8";
-			$this->_db->setQuery($query);
-			$this->_db->query();
+		try {
+			$this->_db->loadResult();
+		} catch ( Exception $e ) {
+			// Create table
+			//if (!$this->_db->loadResult()) {
+				$query = "CREATE TABLE IF NOT EXISTS `#__jd_file_integrity` (
+				  `id` varchar(32) NOT NULL COMMENT 'A hash of the path to the file',
+				  `size` int(11) unsigned NOT NULL COMMENT 'The size of the file',
+				  `mtime` int(11) unsigned NOT NULL COMMENT 'The file modification time',
+				  `owner` int(11) unsigned NOT NULL COMMENT 'The user id of the owner of the file',
+				  `group` int(11) unsigned NOT NULL COMMENT 'The group id of the owner of the file',
+				  `mode` int(4) NOT NULL COMMENT 'The current permissions of the file',
+				  `file_hash` varchar(32) NOT NULL COMMENT 'A hash of the contents of the file',
+				  `location` text NOT NULL COMMENT 'The location of the file going from the Joomla root, not the complete absolute path',
+				  `created_time` int(11) NOT NULL COMMENT 'The created time of the row',
+				  `modified_time` int(11) NOT NULL COMMENT 'The modified time of the row',
+				  PRIMARY KEY (`id`)
+				) CHARSET=utf8";
+				$this->_db->setQuery($query);
+				$this->_db->query();
+			//}
 		}
 	}
 }
