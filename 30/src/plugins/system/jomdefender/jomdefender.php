@@ -170,6 +170,8 @@ class plgSystemJomDefender extends JPlugin {
 
 		if ($this->_params->get('remove_joomla_header')
 				&& 1 == (int) $this->_config->get('gzip')) {
+
+
 			// New value for X-Content-Encoded-By header
 			$encodedby = $this->_params
 					->get('remove_joomla_header_txt', 'Company');
@@ -253,8 +255,10 @@ class plgSystemJomDefender extends JPlugin {
 			return;
 		}
 
+		$app = JFactory::getApplication();
+
 		// Get the body one and work with it
-		$data = JResponse::getBody();
+		$data = $app->getBody();
 
 		if ($this->_params->get('use_cache') && $this->_is_site
 				&& $this->_user->guest) {
@@ -334,6 +338,7 @@ class plgSystemJomDefender extends JPlugin {
 		if ($this->_params->get('remove_space') && $this->_is_site) {
 			$data = preg_replace(
 					'/(?:(?<=\>)|(?<=\/\>))([\t\r\n]+)(?=\<\/?)/', '', $data);
+			$data = $this->MinifyHTML( $data );
 		}
 
 		// Insert modified page into cache
@@ -343,7 +348,42 @@ class plgSystemJomDefender extends JPlugin {
 		}
 
 		// Set the body
-		JResponse::setBody($data);
+		$app->setBody($data);
+	}
+
+	function MinifyHTML($str) {
+		$protected_parts = array('<pre>,</pre>','<textarea>,</textarea>', '<,>');
+		$extracted_values = array();
+		$i = 0;
+		foreach ($protected_parts as $part) {
+		    $finished = false;
+		    $search_offset = $first_offset = 0;
+		    $end_offset = 1;
+		    $startend = explode(',', $part);
+		    if (count($startend) === 1) $startend[1] = $startend[0];
+		    $len0 = strlen($startend[0]); $len1 = strlen($startend[1]);
+		    while ($finished === false) {
+		        $first_offset = strpos($str, $startend[0], $search_offset);
+
+		        if ($first_offset === false) $finished = true;
+		        else {
+		            $search_offset = strpos($str, $startend[1], $first_offset + $len0);
+		            $extracted_values[$i] = substr($str, $first_offset + $len0, $search_offset - $first_offset - $len0);
+		            $str = substr($str, 0, $first_offset + $len0).'$$#'.$i.'$$'.substr($str, $search_offset);
+		            $search_offset += $len1 + strlen((string)$i) + 5 - strlen($extracted_values[$i]);
+		            ++$i;
+		        }
+		    }
+		}
+		$str = preg_replace("/\s/", " ", $str);
+		$str = preg_replace("/\s{2,}/", " ", $str);
+		$replace = array('> <'=>'><', ' >'=>'>','< '=>'<','</ '=>'</');
+		$str = str_replace(array_keys($replace), array_values($replace), $str);
+
+		for ($d = 0; $d < $i; ++$d)
+		    $str = str_replace('$$#'.$d.'$$', $extracted_values[$d], $str);
+
+		return $str;
 	}
 
 	/** Authentication plugin **/
@@ -649,7 +689,7 @@ class plgSystemJomDefender extends JPlugin {
 	function check_all_files($dir) {
 		$files = array();
 
-		
+
 		if ($handle = @opendir($dir)) {
 			while (false !== ($file = readdir($handle))) {
 				if ('.htaccess' == $file || '.' != substr($file, 0, 1)) {
@@ -669,6 +709,8 @@ class plgSystemJomDefender extends JPlugin {
 				}
 			}
 		}
+
+
 
 		return $files;
 	}
@@ -794,18 +836,18 @@ class plgSystemJomDefender extends JPlugin {
 		//jimport('joomla.utilities.utility');
 		jimport('joomla.mail.mail');
 		$mailer = JFactory::getMailer();
-		
+
 		$recipients = explode("\r\n", $this->_params->get('admin_emails'));
-		
+
 		foreach($recipients as $recipient)
 		{
 			$mailfrom = $app->getCfg('mailfrom');
 			$fromname = $app->getCfg('fromname');
 			$subject = 'jomDefender Cron Job Results ' . date('Y-m-d');
 
-			$sender = array( 
+			$sender = array(
 			    $mailfrom,
-			    $fromname 
+			    $fromname
 			);
 			$mailer->setSubject($subject);
 			$mailer->setBody($body);
@@ -867,5 +909,3 @@ if (!function_exists('myPrint')) {
 		}
 	}
 }
-
-?>
