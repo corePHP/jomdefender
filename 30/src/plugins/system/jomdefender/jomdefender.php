@@ -70,10 +70,10 @@ class plgSystemJomDefender extends JPlugin {
 	 *
 	 * @param subject {{@internal Missing Description}}}
 	 */
-	function plgSystemJomDefender(&$subject) {
+	public function __construct(&$subject, $config) {
 		global $JomDefender_plugin, $JomDefender_params;
 
-		parent::__construct($subject);
+		parent::__construct($subject, $config);
 
 		// Check to see if plugin should be disabled
 		$this->_params = $JomDefender_params;
